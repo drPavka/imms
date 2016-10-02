@@ -3,6 +3,7 @@
   "main": "api.js",
   "dependencies": {
     "express": "~4.0.0",
-    "body-parser": "~1.0.1"
+    "express-busboy": "^4.0.0",
+    "jimp": "^0.2.27"
   }
 }
