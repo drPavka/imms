@@ -54,6 +54,8 @@ router.post('/crop', crop);
 
 //post process
 router.use((req, res, next)=>{
+    res.set('Access-Control-Allow-Origin', '*');
+
     if(req.query.hasOwnProperty('base64')){
         req.jimp.getBase64(req.files.data.mimetype, (dummy, src)=>{
             res.send(src);
@@ -88,6 +90,9 @@ app.use(function (req, res, next) {
 // error handler
 
 app.use(function (err, req, res, next) {
+    if(!res.headersSent)
+        res.set('Access-Control-Allow-Origin', '*');
+
     res.status(err.status || 400);
     res.json({message: err.message});
     console.log('error:' + err.message)

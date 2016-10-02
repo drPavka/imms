@@ -18,14 +18,7 @@ Please devise a RESTful API for a microservice for image manipulation. Imagine t
 + ``apidoc -i methods/  -o doc/`` to build the API documentation
 + ``node api`` to run node server on default port 
 
-If everything is OK,  http://localhost:8080/api/v1 will show you the API documentation   
-
-
-
-
-
- 
-
+If everything is OK,  http://localhost:8080/api/v1 will show you the API documentation.  
 
 #Comments
 I'm not sure that I fully understand the idea. 
@@ -33,7 +26,19 @@ In common case for such types of services on the first step user uploads an imag
 
 In our case seems that we have to upload file for each operation. 
  No need for persistent storage, the better :)
-  
+
+The main idea of the API is that user sends image using POST method and gets the response in binary or base 64 string. All parameters are sending using URL query variables. For such a microservice it's quiet enough. In case of more complex service it will better to POST json encoded string with a set of params.
+
+Image processing is implemented using JIMP npm library. 
+ 
+In code two processing filters are used.
+1. Pre process filter  - checks uploaded file and creates JIMP object that is used for image manipulations.  
+1. Post process filter - build the response of needed type (binary or string)  
+
+   
+#Known problems
+In case of using wrong method name in URL e.g. http://localhost:8080/api/v1/crsop?w=200&h=330&x=150&y=120 the validation operation is called. Really, I'm not a nodejs ninja, so decide not to spent time solving this issue. 
+There are the problems with large files related to the limits of busboy library.   
   
  
    

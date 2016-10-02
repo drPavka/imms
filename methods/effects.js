@@ -20,8 +20,8 @@ module.exports = (req,res,next)=>{
     }
 
     //desaturate
-    if(filter = req.query.hasOwnProperty('desaturate')){
-        let param =  (filter)?parseInt(filter):50;
+    if(req.query.hasOwnProperty('desaturate')){
+        let param =  (req.query.desaturate)?parseInt(req.query.desaturate):50;
         req.jimp.color([
             { apply: 'desaturate', params: [ param ] }
         ]);
