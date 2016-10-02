@@ -1,0 +1,8 @@
+{
+  "name": "RESTful API for a microservice for image manipulation",
+
+  "description":"",
+  "template": {
+    "withCompare": false
+  }
+}

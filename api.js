@@ -1,12 +1,11 @@
 "use strict";
+const API_VERSION = '1';
 
 var express = require('express');
 var Jimp = require("jimp");
-
-var app = express();
-
 var bb = require('express-busboy');
 
+var app = express();
 bb.extend(app, {
     upload: true,
     mimeTypeLimit: [
@@ -21,11 +20,20 @@ var port = process.env.PORT || 8080;
 
 var router = express.Router();
 var effects = require('./methods/effects');
+var crop = require('./methods/crop');
+var validate = require('./methods/validate');
+
+router.use('/', express.static('doc', {
+    dotfiles: 'ignore',
+    etag: false,
+    maxAge: '1d',
+    redirect: false
+}));
 
 router.use((request, res, next)=> {
     console.log('validate file data for any request');
-    if(!request.files)  next(new Error('No file'));
-    else if(!request.files.data)  next(new Error('Wrong file data or bad mime type'));
+    if(!request.files)  next(new Error('No_file'));
+    else if(!request.files.data)  next(new Error('Wrong_file_data'));
     else Jimp.read(request.files.data.file).then((jimage)=> {
         request.jimp = jimage;
         next();
@@ -34,19 +42,15 @@ router.use((request, res, next)=> {
     });
 });
 
-router.post('/', (req, res,next)=> {
-/*    res.json({
-        'message': 'File is validated',
-        data: {
-            width: req.jimp.bitmap.width,
-            height: req.jimp.bitmap.height,
-            mime: req.files.data.mimetype
-        }
-    });*/
-    next();
-});
+
+
+router.post('/validate', validate);
 
 router.post('/effects', effects);
+
+router.post('/crop', crop);
+
+
 
 //post process
 router.use((req, res, next)=>{
@@ -60,25 +64,31 @@ router.use((req, res, next)=>{
     else {
         req.jimp.getBuffer(Jimp.AUTO, (dummy, buffer)=>{
             res.type(req.files.data.mimetype).send(buffer);
-            //next();
+            next();
         });
     }
 });
 
-app.use('/api', router);
+app.use('/api/v' + API_VERSION, router);
 
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-    var err = new Error('Method not found');
-    err.status = 404;
-    next(err);
+    if(!res.done){
+        var err = new Error('Method_not_found');
+        err.status = 404;
+        next(err);
+    }
+    else {
+        //next();
+    }
+
 });
 
 // error handler
 
 app.use(function (err, req, res, next) {
-    res.status(err.status || 500);
+    res.status(err.status || 400);
     res.json({message: err.message});
     console.log('error:' + err.message)
 });
