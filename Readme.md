@@ -20,6 +20,11 @@ Please devise a RESTful API for a microservice for image manipulation. Imagine t
 
 If everything is OK,  http://localhost:8080/api/v1 will show you the API documentation.  
 
+#How to test
+
++ Return as Binary ``curl "http://localhost:8080/api/v1/effects?desaturate=99" -X POST -F "data=@path_to_file" > result_file``
++ Return as string. See __test/client.html__
+
 #Comments
 I'm not sure that I fully understand the idea. 
 In common case for such types of services on the first step user uploads an image and gets the resource identifier in response and all next operations are made using this resource. 
@@ -27,7 +32,10 @@ In common case for such types of services on the first step user uploads an imag
 In our case seems that we have to upload file for each operation. 
  No need for persistent storage, the better :)
 
-The main idea of the API is that user sends image using POST method and gets the response in binary or base 64 string. All parameters are sending using URL query variables. For such a microservice it's quiet enough. In case of more complex service it will better to POST json encoded string with a set of params.
+The main idea of the API is that user sends image using POST method and gets the response in binary or base 64 string.
+    
+ 
+ All parameters are sending using URL query variables. For such a microservice it's quiet enough. In case of more complex service it will better to POST json encoded string with a set of params.
 
 Image processing is implemented using JIMP npm library. 
  
